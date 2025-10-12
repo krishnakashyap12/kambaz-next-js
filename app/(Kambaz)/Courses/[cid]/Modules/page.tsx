@@ -9,17 +9,14 @@ import ModuleControlButtons from "./ModuleControlButtons";
 export default function ModulesPage() {
   return (
     <div id="wd-modules-page">
-      {/* Top controls (Collapse All, View Progress, Publish All, +Module) */}
       <ModulesControls />
-      {/* Add some vertical breathing room as in the lab */}
       <br /><br /><br />
 
       <ListGroup className="rounded-0" id="wd-modules">
-        {/* === Week 1 === */}
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
-            Week 1 - Introduction, HTML Basics
+            Week 1
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
@@ -40,17 +37,21 @@ export default function ModulesPage() {
             </ListGroupItem>
             <ListGroupItem className="wd-lesson p-3 ps-1">
               <BsGripVertical className="me-2 fs-3" />
-              Structuring Pages with HTML
+              Lesson 1
+              <LessonControlButtons />
+            </ListGroupItem>
+            <ListGroupItem className="wd-lesson p-3 ps-1">
+              <BsGripVertical className="me-2 fs-3" />
+              Lesson 2
               <LessonControlButtons />
             </ListGroupItem>
           </ListGroup>
         </ListGroupItem>
 
-        {/* === Week 2 === */}
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
-            Week 2 - HTML Forms, CSS Introduction
+            Week 2
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
@@ -71,17 +72,21 @@ export default function ModulesPage() {
             </ListGroupItem>
             <ListGroupItem className="wd-lesson p-3 ps-1">
               <BsGripVertical className="me-2 fs-3" />
-              Understanding CSS Selectors
+              Lesson 1
+              <LessonControlButtons />
+            </ListGroupItem>
+            <ListGroupItem className="wd-lesson p-3 ps-1">
+              <BsGripVertical className="me-2 fs-3" />
+              Lesson 2
               <LessonControlButtons />
             </ListGroupItem>
           </ListGroup>
         </ListGroupItem>
 
-        {/* === Week 3 === */}
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
-            Week 3 - CSS Layouts
+            Week 3
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
@@ -100,19 +105,28 @@ export default function ModulesPage() {
               Positioning and Floating Elements
               <LessonControlButtons />
             </ListGroupItem>
-             <ListGroupItem className="wd-lesson p-3 ps-1">
+            <ListGroupItem className="wd-lesson p-3 ps-1">
               <BsGripVertical className="me-2 fs-3" />
               Introduction to Flexbox
+              <LessonControlButtons />
+            </ListGroupItem>
+            <ListGroupItem className="wd-lesson p-3 ps-1">
+              <BsGripVertical className="me-2 fs-3" />
+              Lession 1
+              <LessonControlButtons />
+            </ListGroupItem>
+            <ListGroupItem className="wd-lesson p-3 ps-1">
+              <BsGripVertical className="me-2 fs-3" />
+              Lession 2
               <LessonControlButtons />
             </ListGroupItem>
           </ListGroup>
         </ListGroupItem>
 
-        {/* === Week 4 === */}
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
-            Week 4 - Responsive Design & Frameworks
+            Week 4
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
@@ -139,11 +153,10 @@ export default function ModulesPage() {
           </ListGroup>
         </ListGroupItem>
 
-        {/* === Week 5 === */}
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
-            Week 5 - JavaScript Fundamentals
+            Week 5
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">

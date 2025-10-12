@@ -1,12 +1,10 @@
 body { margin: 0; padding: 0; }
 body * { font-family: Arial, Helvetica, sans-serif; }
 
-/* Offset the main content only when the fixed sidebar is shown (≥ md) */
 @media (min-width: 768px) {
   #wd-kambaz .wd-main-content-offset { padding-left: 140px !important; }
 }
 
-/* Active item styling for list-group sidebars (Kambaz/Course) */
 .list-group.wd > .list-group-item.active {
   color: black;
   background-color: white;
@@ -19,7 +17,6 @@ body * { font-family: Arial, Helvetica, sans-serif; }
   border-left: 3px solid black !important;
 }
 
-/* Secondary button & bg override to match Canvas-like gray */
 .btn-secondary {
   --bs-btn-color: #000 !important;
   --bs-btn-bg: #c7cdd1 !important;
@@ -31,7 +28,6 @@ body * { font-family: Arial, Helvetica, sans-serif; }
   --bs-secondary-rgb: 199, 205, 209;
 }
 
-/* Make list-group borders gray & add left green bar for lessons */
 .list-group-item {
   --bs-list-group-border-color: gray;
 }
@@ -39,31 +35,25 @@ body * { font-family: Arial, Helvetica, sans-serif; }
   border-left: 3px solid green !important;
 }
 
-/* thin gray border utility for module wrapper */
 .border-gray {
   border: 1px solid gray !important;
 }
 
-/* match Canvas-like subtle pill */
 .wd-badge-pill { border: 1px solid #ddd; }
 
-/* left green rail and light card border like the screenshot */
 .wd-assignment-row { border-left: 3px solid #198754 !important; }
 
-/* keep list borders gray (you likely already have this) */
 .list-group-item { --bs-list-group-border-color: #ddd; }
 
-/* Global reset (you likely have these already) */
 body { margin: 0; padding: 0; }
 body * { font-family: Arial, Helvetica, sans-serif; }
 
 @media (min-width: 768px) {
   #wd-kambaz .wd-main-content-offset {
-    padding-left: 140px !important; /* sidebar is ~120px; 140 gives breathing room */
+    padding-left: 140px !important; 
   }
 }
 
-/* Active item look for Kambaz & Account sidebars */
 .list-group.wd > .list-group-item.active {
   color: black;
   background-color: white;
