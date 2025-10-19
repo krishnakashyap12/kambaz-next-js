@@ -64,6 +64,7 @@ export default function Lab3() {
       <Classes />
       <Styles />
       <Add a={3} b={4} />
+      <hr />
       <h4>Square of 4</h4>
       <Square>4</Square>
       <hr />
@@ -71,6 +72,7 @@ export default function Lab3() {
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipitratione eaque illo minus cum, saepe totam
         vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
       </Highlight>
+      <hr />
       <PathParameters/> 
       <TodoItem />
       <TodoList />
