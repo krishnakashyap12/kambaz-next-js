@@ -30,6 +30,7 @@ import Highlight from "./Highlight";
 import PathParameters from "./PathParameters";
 import TodoItem from "./todos/TodoItem";
 import TodoList from "./todos/TodoList";
+import BooleanVariables from "./BooleanVariables";
 export default function Lab3() {
   console.log('Hello World!');
   return (
@@ -37,6 +38,7 @@ export default function Lab3() {
       <h3>Lab 3</h3>
       <VariablesAndConstants />
       <VariableTypes />
+      <BooleanVariables />
       <IfElse />
       <TernaryOperator />
       <ConditionalOutputIfElse />
