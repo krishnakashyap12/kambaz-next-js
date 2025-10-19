@@ -71,7 +71,7 @@ export default function Lab3() {
         vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
       </Highlight>
       <PathParameters/> 
-      <AddPathParameters />
+      {/* <AddPathParameters /> */}
       <TodoItem />
       <TodoList />
 
