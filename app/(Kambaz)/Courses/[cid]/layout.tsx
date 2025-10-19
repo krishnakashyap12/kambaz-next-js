@@ -1,33 +1,31 @@
-import type { ReactNode } from "react";
+import { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
-import { FaBars } from "react-icons/fa";
+import Breadcrumb from "./Breadcrumb";
+import { courses } from "../../Database";
 
 
-type Props = {
+
+export default async function CoursesLayout({
+  children,
+  params,
+}: Readonly<{
   children: ReactNode;
   params: Promise<{ cid: string }>;
-};
-
-export default async function CoursesLayout({ children, params }: Props) {
+}>) {
   const { cid } = await params;
+  const course = courses.find((c) => c._id === cid);
 
   return (
     <div id="wd-courses">
-      <h2 className="text-danger d-flex align-items-center">
-        <span aria-hidden="true" className="me-3">
-          <FaBars className="fs-4 mb-1" />
-        </span>
-        <span>Course {cid}</span>
-      </h2>
+      <Breadcrumb course={course} />
       <hr />
       <div className="d-flex">
-        {/* Sidebar: hidden on < md */}
-        <div className="d-none d-md-block me-3" style={{ minWidth: 220 }}>
-          <CourseNavigation />
+        <div className="d-none d-md-block">
+          <CourseNavigation cid={cid} />
         </div>
-
-        {/* Main content */}
-        <div className="flex-fill">{children}</div>
+        <div className="flex-fill">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -1,13 +1,22 @@
 'use client';
 import { Button, Col, FormCheck, FormControl, FormLabel, FormSelect, InputGroup, Row } from "react-bootstrap";
+import { useParams } from "next/navigation";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { CiCalendar } from "react-icons/ci";
+import Link from "next/link";
+import assignments from "../../../../Database/assignments.json"
 
 export default function AssignmentEditor() {
+  const params = useParams();
+  const cid = params.cid as string;
+  const aid = params.aid as string;
+
+  const assignment = assignments.find((a) => a._id === aid);
+
   return (
     <div id="wd-assignments-editor">
       <FormLabel>Assignment Name</FormLabel>
-      <FormControl type="email" placeholder="A1" className="" />
+      <FormControl type="text" id="wd-name" defaultValue={assignment?.title || "A1"} />
       <br />
       <div
         contentEditable={true}
@@ -28,7 +37,6 @@ export default function AssignmentEditor() {
       </div>
       <br /><br />
 
-      {/* ERROR 2 FIX: Removed the incorrect <Table> wrapper */}
       <div>
         <Row className="mb-4">
           <Col className="text-end me-1">
@@ -122,12 +130,18 @@ export default function AssignmentEditor() {
       </div>
       <hr />
       <div className="d-flex justify-content-end">
-        <Button variant="secondary" className="rounded-sm me-1" >
-          Cancel
-        </Button>
-        <Button variant="danger" className="rounded-sm">
-          Save
-        </Button>
+        <Link href={`/Courses/${cid}/Assignments`}>
+          <Button variant="secondary" className="rounded-sm me-1" >
+            Cancel
+          </Button>
+        </Link>
+
+        <Link href={`/Courses/${cid}/Assignments`}>
+          <Button variant="danger" className="rounded-sm">
+            Save
+          </Button>
+        </Link>
+
       </div>
     </div>
   );

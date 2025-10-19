@@ -15,33 +15,15 @@ import { BsGripVertical } from "react-icons/bs";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckMark";
 
+// ✅ Import JSON data
+import assignmentsData from "../../../Database/assignments.json";
+
 export default function AssignmentsPage() {
   const { cid } = useParams<{ cid: string }>();
   const base = `/Courses/${cid}/Assignments`;
 
-  const assignments = [
-    {
-      id: "A1",
-      title: "A1",
-      due: "May 13 • 11:59pm",
-      pts: 100,
-      avail: "Not available until May 6 • 12:00am",
-    },
-    {
-      id: "A2",
-      title: "A2",
-      due: "May 20 • 11:59pm",
-      pts: 100,
-      avail: "Not available until May 13 • 12:00am",
-    },
-    {
-      id: "A3",
-      title: "A3",
-      due: "May 27 • 11:59pm",
-      pts: 100,
-      avail: "Not available until May 20 • 12:00am",
-    },
-  ];
+  // ✅ Filter only assignments belonging to this course
+  const assignments = assignmentsData.filter((a) => a.course === cid);
 
   return (
     <div id="wd-assignments" className="mt-2">
@@ -68,16 +50,13 @@ export default function AssignmentsPage() {
           <Button variant="secondary" className="me-2 text-nowrap">
             <FaPlus className="me-2" /> Group
           </Button>
-          <Button
-            variant="danger"
-            className="text-nowrap"
-            id="wd-add-assignment"
-          >
+          <Button variant="danger" className="text-nowrap" id="wd-add-assignment">
             <FaPlus className="me-2" /> Assignment
           </Button>
         </div>
       </div>
 
+      {/* Section Header */}
       <div className="d-flex align-items-center justify-content-between border rounded px-3 py-2 bg-white">
         <div className="d-flex align-items-center">
           <BsGripVertical className="me-2 text-muted" />
@@ -96,25 +75,28 @@ export default function AssignmentsPage() {
         </div>
       </div>
 
+      {/* Assignment List */}
       <ListGroup className="rounded-0 mt-2">
         {assignments.map((a) => (
-          <ListGroupItem key={a.id} className="p-3 ps-1 wd-assignment-row">
+          <ListGroupItem key={a._id} className="p-3 ps-1 wd-assignment-row">
             <div className="d-flex align-items-start">
               <BsGripVertical className="me-2 fs-5 text-muted flex-shrink-0" />
               <div className="flex-fill">
                 <Link
-                  href={`${base}/${a.id}`}
+                  href={`${base}/${a._id}`}
                   className="fw-semibold text-decoration-none"
                 >
                   {a.title}
                 </Link>
                 <div className="small mt-1">
                   <span className="text-success me-3">Multiple Modules</span>
-                  <span className="text-muted">{a.avail}</span>
+                  <span className="text-muted">
+                    Not available until May 6 • 12:00am
+                  </span>
                   <span className="mx-2 text-muted">|</span>
-                  <span className="text-muted">Due {a.due}</span>
+                  <span className="text-muted">Due May 13 • 11:59pm</span>
                   <span className="mx-2 text-muted">|</span>
-                  <span className="text-muted">{a.pts} pts</span>
+                  <span className="text-muted">100 pts</span>
                 </div>
               </div>
               <GreenCheckmark />
