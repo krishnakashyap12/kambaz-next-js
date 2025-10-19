@@ -64,7 +64,6 @@ export default function Lab3() {
       <Classes />
       <Styles />
       <Add a={3} b={4} />
-      <hr />
       <h4>Square of 4</h4>
       <Square>4</Square>
       <hr />
