@@ -63,6 +63,7 @@ export default function Lab3() {
       <DestructingImports />
       <Classes />
       <Styles />
+      <hr />
       <Add a={3} b={4} />
       <h4>Square of 4</h4>
       <Square>4</Square>
@@ -72,7 +73,7 @@ export default function Lab3() {
         vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
       </Highlight>
       <hr />
-      <PathParameters/> 
+      <PathParameters />
       <TodoItem />
       <TodoList />
 
