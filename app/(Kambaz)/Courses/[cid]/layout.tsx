@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
-import { FaAlignJustify } from "react-icons/fa";
 import { courses } from "../../Database";
 import Breadcrumb from "./Breadcrumb";
 
@@ -16,14 +15,12 @@ export default async function CoursesLayout({ children, params }: Props) {
   return (
     <div id="wd-courses">
       <h2 className="text-danger d-flex align-items-center">
-        <span aria-hidden="true" className="me-3">
-        </span>
         <Breadcrumb course={course} />
       </h2>
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block me-3" style={{ minWidth: 220 }}>
-          <CourseNavigation cid={cid} />
+          <CourseNavigation />
         </div>
         <div className="flex-fill">{children}</div>
       </div>
