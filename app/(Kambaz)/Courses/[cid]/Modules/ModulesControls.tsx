@@ -2,7 +2,7 @@
 import { Button, Dropdown } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa6";
 import GreenCheckmark from "./GreenCheckMark";
-import RedBanIcon from "./RedBanIcon";
+import StopSign from "./StopSign";
 import ModuleEditor from "./ModuleEditor";
 import { ReactNode, useState } from 'react';
 
@@ -53,10 +53,10 @@ export default function ModulesControls({
             <GreenCheckmark /> Publish modules only
           </Dropdown.Item>
           <Dropdown.Item id="wd-unpublish-all-modules-and-items">
-            <RedBanIcon /> Unpublish all modules and items
+            <StopSign /> Unpublish all modules and items
           </Dropdown.Item>
           <Dropdown.Item id="wd-unpublish-modules-only">
-            <RedBanIcon /> Unpublish modules only
+            <StopSign /> Unpublish modules only
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
