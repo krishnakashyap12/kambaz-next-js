@@ -1,148 +1,298 @@
-'use client';
-import { Button, Col, FormCheck, FormControl, FormLabel, FormSelect, InputGroup, Row } from "react-bootstrap";
-import { useParams } from "next/navigation";
+"use client";
+
+import {
+  Button,
+  Col,
+  FormCheck,
+  FormControl,
+  FormLabel,
+  FormSelect,
+  InputGroup,
+  Row,
+} from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { CiCalendar } from "react-icons/ci";
-import Link from "next/link";
-import assignments from "../../../../Database/assignments.json"
+import { useParams, useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { RootState } from "../../../../store";
+import { addAssignment, updateAssignment } from "../reducer";
+// import { addAssignment, updateAssignment } from "../reducer";
+
+// Define a proper Assignment type
+type Assignment = {
+  _id: string;
+  title: string;
+  course: string;
+  description?: string;
+  points?: number;
+  group?: string;
+  gradeAs?: string;
+  submissionType?: string;
+  dueDate?: string;
+  availableFrom?: string;
+  availableUntil?: string;
+};
+
+type FormData = {
+  title: string;
+  description: string;
+  points: number;
+  group: string;
+  gradeAs: string;
+  submissionType: string;
+  dueDate: string;
+  availableFrom: string;
+  availableUntil: string;
+};
 
 export default function AssignmentEditor() {
   const params = useParams();
+  const router = useRouter();
+  const dispatch = useDispatch();
   const cid = params.cid as string;
   const aid = params.aid as string;
 
-  const assignment = assignments.find((a) => a._id === aid);
+  const { assignments } = useSelector(
+    (state: RootState) => state.assignmentsReducer
+  );
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const isFaculty = currentUser?.role === "FACULTY";
+
+  const assignment: Assignment | undefined = assignments.find(a => a._id === aid);
+
+  const [formData, setFormData] = useState<FormData>({
+    title: "New Assignment",
+    description: "The assignment is available online.",
+    points: 100,
+    group: "ASSIGNMENTS",
+    gradeAs: "Percentage",
+    submissionType: "Online",
+    dueDate: "2025-05-13T23:59",
+    availableFrom: "2025-05-06T00:00",
+    availableUntil: "2025-05-20T23:59",
+  });
+
+  useEffect(() => {
+    if (assignment && aid !== "new") {
+      setFormData({
+        title: assignment.title,
+        description: assignment.description || "The assignment is available online.",
+        points: assignment.points ?? 100,
+        group: assignment.group || "ASSIGNMENTS",
+        gradeAs: assignment.gradeAs || "Percentage",
+        submissionType: assignment.submissionType || "Online",
+        dueDate: assignment.dueDate || "2025-05-13T23:59",
+        availableFrom: assignment.availableFrom || "2025-05-06T00:00",
+        availableUntil: assignment.availableUntil || "2025-05-20T23:59",
+      });
+    }
+  }, [assignment, aid]);
+
+  const handleSave = () => {
+    if (!isFaculty) return;
+
+    if (aid === "new") {
+      dispatch(addAssignment({ ...formData, course: cid }));
+    } else {
+      dispatch(updateAssignment({ ...formData, _id: aid, course: cid }));
+    }
+    router.push(`/Courses/${cid}/Assignments`);
+  };
+
+  const handleCancel = () => {
+    router.push(`/Courses/${cid}/Assignments`);
+  };
 
   return (
-    <div id="wd-assignments-editor">
+    <div id="wd-assignments-editor" className="container mt-4">
       <FormLabel>Assignment Name</FormLabel>
-      <FormControl type="text" id="wd-name" defaultValue={assignment?.title || "A1"} />
+      <FormControl
+        type="text"
+        id="wd-name"
+        value={formData.title}
+        disabled={!isFaculty}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+      />
       <br />
-      <div
-        contentEditable={true}
-        className="form-control"
-        style={{ minHeight: "100px" }}
-        suppressContentEditableWarning={true}
-      >
-        The assignment is <span className="text-danger">available online</span><br /><br />
-        Submit a link to the landing page of your Web application running on Netlify.<br /><br />
-        The landing page should include the following:
-        <ul>
-          <li>Your full name and section</li>
-          <li>Links to each of the lab assignments</li>
-          <li>Links to the Kambaz application</li>
-          <li>Links to all relevant source code repositories</li>
-        </ul>
-        The Kambaz application should include a link to navigate back to the landing page.
-      </div>
-      <br /><br />
 
-      <div>
-        <Row className="mb-4">
-          <Col className="text-end me-1">
-            Points
-          </Col>
-          <Col className="text-start col-8" >
-            <FormControl type="number" placeholder="100"></FormControl>
-          </Col>
-        </Row>
-        <Row className="mb-4">
-          <Col className="text-end">
-            Assignment Group
-          </Col>
-          <Col className="text-start col-8">
-            <FormSelect>
-              <option value='assignments'>ASSIGNMENTS</option>
-              <option value='quizzes'>Quizzes</option>
-              <option value="EXAMS">EXAMS</option>
-              <option value="PROJECTS">PROJECTS</option>
-            </FormSelect>
-          </Col>
-        </Row>
-        <Row className="mb-4">
-          <Col className="text-end">
-            Display Grade as
-          </Col>
-          <Col className="text-start col-8">
-            <FormSelect>
-              <option value="percentage">Percentage</option>
-              <option value="points">Points</option>
-            </FormSelect>
-          </Col>
-        </Row>
-        <Row className="mb-4">
-          <Col className="text-end">
-            Submission Type
-          </Col>
-          <Col className="text-start col-8">
-            <div className="border rounded p-2">
-              <FormSelect>
-                <option value="online">Online</option>
-                <option value="On-paper">On paper</option>
-              </FormSelect>
-              <br />
-              <div className="mb-2"><strong>Online Entry Options</strong></div>
-              <FormCheck type="checkbox" label="Text Entry" className="mb-3" />
-              <FormCheck type="checkbox" label="Website URL" className="mb-3" defaultChecked />
-              <FormCheck type="checkbox" label="Media Recordings" className="mb-3" />
-              <FormCheck type="checkbox" label="Student Annotation" className="mb-3" />
-              <FormCheck type="checkbox" label="File Uploads" className="mb-3" />
-            </div>
-          </Col>
-        </Row>
-        <Row className="mb-4">
-          <Col className="text-end">
-            Assign
-          </Col>
-          <Col className="text-start col-8">
-            <div className="border rounded p-2">
-              <FormLabel className="fw-bold">Assign to</FormLabel>
-              <FormSelect className="mb-2">
-                <option value="everyone">Everyone</option>
-              </FormSelect>
-              <FormLabel className="fw-bold" >
-                Due
-              </FormLabel>
-              <InputGroup className="mb-2">
-                <FormControl type="datetime-local" placeholder="May 13, 2024, 11:59 PM" defaultValue="2024-05-13T23:59" />
-                <InputGroupText><CiCalendar /></InputGroupText>
-              </InputGroup>
-              <Row>
-                <Col>
-                  <FormLabel className="fw-bold">Available from</FormLabel>
-                  <InputGroup className="mb-2">
-                    <FormControl type="datetime-local" placeholder="May 6, 2024, 12:00 AM" defaultValue="2024-05-13T23:59" />
-                    <InputGroupText><CiCalendar /></InputGroupText>
-                  </InputGroup>
-                </Col>
-                <Col>
-                  <FormLabel className="fw-bold">Until</FormLabel>
-                  <InputGroup className="mb-2">
-                    {/* ERROR 1 FIX: Added missing closing quote */}
-                    <FormControl type="datetime-local" defaultValue="2024-05-13T23:59" />
-                    <InputGroupText><CiCalendar /></InputGroupText>
-                  </InputGroup>
-                </Col>
-              </Row>
-            </div>
-          </Col>
-        </Row>
+      <div
+        contentEditable={isFaculty}
+        suppressContentEditableWarning={true}
+        className="form-control"
+        style={{ minHeight: "120px" }}
+        onInput={(e) =>
+          setFormData({ ...formData, description: e.currentTarget.textContent || "" })
+        }
+      >
+        {formData.description}
       </div>
+
+      <br />
+
+      {/* Points */}
+      <Row className="mb-4">
+        <Col className="text-end me-1">Points</Col>
+        <Col className="text-start col-8">
+          <FormControl
+            type="number"
+            value={formData.points}
+            disabled={!isFaculty}
+            onChange={(e) =>
+              setFormData({ ...formData, points: parseInt(e.target.value) })
+            }
+          />
+        </Col>
+      </Row>
+
+      {/* Assignment Group */}
+      <Row className="mb-4">
+        <Col className="text-end">Assignment Group</Col>
+        <Col className="text-start col-8">
+          <FormSelect
+            value={formData.group}
+            disabled={!isFaculty}
+            onChange={(e) => setFormData({ ...formData, group: e.target.value })}
+          >
+            <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+            <option value="QUIZZES">QUIZZES</option>
+            <option value="EXAMS">EXAMS</option>
+            <option value="PROJECTS">PROJECTS</option>
+          </FormSelect>
+        </Col>
+      </Row>
+
+      {/* Display Grade As */}
+      <Row className="mb-4">
+        <Col className="text-end">Display Grade as</Col>
+        <Col className="text-start col-8">
+          <FormSelect
+            value={formData.gradeAs}
+            disabled={!isFaculty}
+            onChange={(e) => setFormData({ ...formData, gradeAs: e.target.value })}
+          >
+            <option value="Percentage">Percentage</option>
+            <option value="Points">Points</option>
+            <option value="Letter Grade">Letter Grade</option>
+          </FormSelect>
+        </Col>
+      </Row>
+
+      {/* Submission Type */}
+      <Row className="mb-4">
+        <Col className="text-end">Submission Type</Col>
+        <Col className="text-start col-8">
+          <div className="border rounded p-2">
+            <FormSelect
+              value={formData.submissionType}
+              disabled={!isFaculty}
+              onChange={(e) =>
+                setFormData({ ...formData, submissionType: e.target.value })
+              }
+            >
+              <option value="Online">Online</option>
+              <option value="On Paper">On paper</option>
+              <option value="External Tool">External Tool</option>
+            </FormSelect>
+            <br />
+            <div className="mb-2">
+              <strong>Online Entry Options</strong>
+            </div>
+            <FormCheck type="checkbox" label="Text Entry" disabled={!isFaculty} />
+            <FormCheck type="checkbox" label="Website URL" className="mb-2" disabled={!isFaculty} defaultChecked/>
+            <FormCheck type="checkbox" label="Media Recordings" disabled={!isFaculty} />
+            <FormCheck type="checkbox" label="Student Annotation" disabled={!isFaculty} />
+            <FormCheck type="checkbox" label="File Uploads" disabled={!isFaculty} />
+          </div>
+        </Col>
+      </Row>
+
+      {/* Assign Section */}
+      <Row className="mb-4">
+        <Col className="text-end">Assign</Col>
+        <Col className="text-start col-8">
+          <div className="border rounded p-2">
+            <FormLabel className="fw-bold">Assign to</FormLabel>
+            <FormSelect className="mb-2" disabled={!isFaculty}>
+              <option value="everyone">Everyone</option>
+            </FormSelect>
+
+            <FormLabel className="fw-bold">Due</FormLabel>
+            <InputGroup className="mb-2">
+              <FormControl
+                type="datetime-local"
+                value={formData.dueDate}
+                disabled={!isFaculty}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
+              />
+              <InputGroupText>
+                <CiCalendar />
+              </InputGroupText>
+            </InputGroup>
+
+            <Row>
+              <Col>
+                <FormLabel className="fw-bold">Available from</FormLabel>
+                <InputGroup className="mb-2">
+                  <FormControl
+                    type="datetime-local"
+                    value={formData.availableFrom}
+                    disabled={!isFaculty}
+                    onChange={(e) =>
+                      setFormData({ ...formData, availableFrom: e.target.value })
+                    }
+                  />
+                  <InputGroupText>
+                    <CiCalendar />
+                  </InputGroupText>
+                </InputGroup>
+              </Col>
+
+              <Col>
+                <FormLabel className="fw-bold">Until</FormLabel>
+                <InputGroup className="mb-2">
+                  <FormControl
+                    type="datetime-local"
+                    value={formData.availableUntil}
+                    disabled={!isFaculty}
+                    onChange={(e) =>
+                      setFormData({ ...formData, availableUntil: e.target.value })
+                    }
+                  />
+                  <InputGroupText>
+                    <CiCalendar />
+                  </InputGroupText>
+                </InputGroup>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+
       <hr />
-      <div className="d-flex justify-content-end">
-        <Link href={`/Courses/${cid}/Assignments`}>
-          <Button variant="secondary" className="rounded-sm me-1" >
+
+      {/* Action Buttons */}
+      {isFaculty && (
+        <div className="d-flex justify-content-end mb-4">
+          <Button
+            variant="secondary"
+            className="rounded-sm me-2"
+            onClick={handleCancel}
+          >
             Cancel
           </Button>
-        </Link>
 
-        <Link href={`/Courses/${cid}/Assignments`}>
-          <Button variant="danger" className="rounded-sm">
+          <Button
+            variant="danger"
+            className="rounded-sm"
+            onClick={handleSave}
+          >
             Save
           </Button>
-        </Link>
-
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,27 +1,33 @@
-import type { ReactNode } from "react";
-import CourseNavigation from "./Navigation";
-import { courses } from "../../Database";
-import Breadcrumb from "./Breadcrumb";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+import { ReactNode, useState } from 'react';
+import CourseNavigation from './Navigation';
+import { useSelector } from 'react-redux';
+import { useParams } from 'next/navigation';
+import Breadcrumb from './Breadcrumb';
+import * as db from '../../Database';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { RootState } from "../../store";
 
-type Props = {
-  children: ReactNode;
-  params: Promise<{ cid: string }>;
-};
+export default function CoursesLayout({ children }: { children: ReactNode }) {
+  const { cid } = useParams<{ cid: string }>();
+  const [modules, setModules] = useState<any[]>(db.modules);
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
+  const course = courses.find((course: any) => course._id === cid);
 
-export default async function CoursesLayout({ children, params }: Props) {
-  const { cid } = await params;
-  const course = courses.find((c: { _id: string }) => c._id === cid);
+  const [showNav, setShowNav] = useState(true);
+  const toggleNav = () => setShowNav((v) => !v);
 
   return (
     <div id="wd-courses">
-      <h2 className="text-danger d-flex align-items-center">
-        <Breadcrumb course={course} />
-      </h2>
+      <Breadcrumb course={course} onToggle={toggleNav} />
       <hr />
       <div className="d-flex">
-        <div className="d-none d-md-block me-3" style={{ minWidth: 220 }}>
-          <CourseNavigation />
-        </div>
+        {showNav && (
+          <div>
+            <CourseNavigation cid={cid} />
+          </div>
+        )}
         <div className="flex-fill">{children}</div>
       </div>
     </div>

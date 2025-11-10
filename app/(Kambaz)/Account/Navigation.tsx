@@ -1,20 +1,42 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 import ListGroup from "react-bootstrap/ListGroup";
 
 export default function AccountNavigation() {
   const pathname = usePathname();
-  const active = (href: string) => (pathname === href || pathname.startsWith(href + "/"));
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+  const linkToHref: Record<string, string> = {
+    Signin: "/Account/Signin",
+    Signup: "/Account/Signup",
+    Profile: "/Account/Profile",
+  };
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <div id="wd-account-navigation" style={{ minWidth: 220 }}>
-
       <ListGroup className="wd list-group fs-5 rounded-0">
-        <Link href="/Account/Signin"  className={`list-group-item border-0 ${active("/Account/Signin")  ? "active" : "text-danger"}`}>Signin</Link>
-        <Link href="/Account/Signup"  className={`list-group-item border-0 ${active("/Account/Signup")  ? "active" : "text-danger"}`}>Signup</Link>
-        <Link href="/Account/Profile" className={`list-group-item border-0 ${active("/Account/Profile") ? "active" : "text-danger"}`}>Profile</Link>
+        {links.map((link) => {
+          const href = linkToHref[link];
+          return (
+            <Link
+              key={link}
+              href={href}
+              id={`wd-account-${link.toLowerCase()}-link`}
+              className={`list-group-item border-0 ${
+                isActive(href) ? "active" : "text-danger"
+              }`}
+            >
+              {link}
+            </Link>
+          );
+        })}
       </ListGroup>
     </div>
   );
