@@ -16,10 +16,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from "../../../../store";
-import { addAssignment, updateAssignment } from "../reducer";
-// import { addAssignment, updateAssignment } from "../reducer";
+import { addAssignment, updateAssignment, setAssignments } from "../reducer";
+import * as client from "../client";
 
-// Define a proper Assignment type
 type Assignment = {
   _id: string;
   title: string;
@@ -59,8 +58,6 @@ export default function AssignmentEditor() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const isFaculty = currentUser?.role === "FACULTY";
 
-  const assignment: Assignment | undefined = assignments.find(a => a._id === aid);
-
   const [formData, setFormData] = useState<FormData>({
     title: "New Assignment",
     description: "The assignment is available online.",
@@ -73,31 +70,51 @@ export default function AssignmentEditor() {
     availableUntil: "2025-05-20T23:59",
   });
 
+  // Fetch assignment from backend if editing existing one
   useEffect(() => {
-    if (assignment && aid !== "new") {
-      setFormData({
-        title: assignment.title,
-        description: assignment.description || "The assignment is available online.",
-        points: assignment.points ?? 100,
-        group: assignment.group || "ASSIGNMENTS",
-        gradeAs: assignment.gradeAs || "Percentage",
-        submissionType: assignment.submissionType || "Online",
-        dueDate: assignment.dueDate || "2025-05-13T23:59",
-        availableFrom: assignment.availableFrom || "2025-05-06T00:00",
-        availableUntil: assignment.availableUntil || "2025-05-20T23:59",
-      });
-    }
-  }, [assignment, aid]);
+    const fetchAssignment = async () => {
+      if (aid !== "new") {
+        try {
+          const assignment = await client.findAssignmentById(aid);
+          setFormData({
+            title: assignment.title,
+            description: assignment.description || "The assignment is available online.",
+            points: assignment.points ?? 100,
+            group: assignment.group || "ASSIGNMENTS",
+            gradeAs: assignment.gradeAs || "Percentage",
+            submissionType: assignment.submissionType || "Online",
+            dueDate: assignment.dueDate || "2025-05-13T23:59",
+            availableFrom: assignment.availableFrom || "2025-05-06T00:00",
+            availableUntil: assignment.availableUntil || "2025-05-20T23:59",
+          });
+        } catch (error) {
+          console.error("Error fetching assignment:", error);
+        }
+      }
+    };
+    fetchAssignment();
+  }, [aid]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isFaculty) return;
 
-    if (aid === "new") {
-      dispatch(addAssignment({ ...formData, course: cid }));
-    } else {
-      dispatch(updateAssignment({ ...formData, _id: aid, course: cid }));
+    try {
+      if (aid === "new") {
+        const newAssignment = await client.createAssignmentForCourse(cid, formData);
+        dispatch(addAssignment(newAssignment));
+      } else {
+        const updatedAssignment = await client.updateAssignment({ 
+          ...formData, 
+          _id: aid, 
+          course: cid 
+        });
+        dispatch(updateAssignment(updatedAssignment));
+      }
+      router.push(`/Courses/${cid}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+      alert("Failed to save assignment");
     }
-    router.push(`/Courses/${cid}/Assignments`);
   };
 
   const handleCancel = () => {

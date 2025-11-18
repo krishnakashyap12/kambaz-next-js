@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "./reducer";
+import { setAssignments, deleteAssignment } from "./reducer";
+import * as client from "./client";
 import {
   Button,
   FormControl,
@@ -29,15 +31,34 @@ export default function Assignments() {
     (state: RootState) => state.accountReducer
   );
 
+  // Fetch assignments from backend on mount
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const assignments = await client.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignments));
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      }
+    };
+    fetchAssignments();
+  }, [cid, dispatch]);
+
   const filteredAssignments = assignments.filter(
     (assignment) => assignment.course === cid
   );
 
   const isFaculty = currentUser?.role === "FACULTY";
 
-  const handleDelete = (assignmentId: string) => {
+  const handleDelete = async (assignmentId: string) => {
     if (window.confirm("Are you sure you want to remove this assignment?")) {
-      dispatch(deleteAssignment(assignmentId));
+      try {
+        await client.deleteAssignment(assignmentId);
+        dispatch(deleteAssignment(assignmentId));
+      } catch (error) {
+        console.error("Error deleting assignment:", error);
+        alert("Failed to delete assignment");
+      }
     }
   };
 
