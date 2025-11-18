@@ -1,9 +1,7 @@
 "use client";
-import { FormControl } from "react-bootstrap";
 import React, { useState } from "react";
-
+import { FormControl, FormCheck } from "react-bootstrap";
 const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
-
 export default function WorkingWithObjects() {
   const [assignment, setAssignment] = useState({
     id: 1,
@@ -13,42 +11,51 @@ export default function WorkingWithObjects() {
     completed: false,
     score: 0,
   });
-
-  const [module, setModule] = useState({
-    id: "M101",
-    name: "Intro to React",
-    description: "Basics of components and hooks",
+  const [moduleObj, setModuleObj] = useState({
+    id: "m1",
+    name: "Intro",
+    description: "Overview",
     course: "CS5610",
   });
-
   const ASSIGNMENT_API_URL = `${HTTP_SERVER}/lab5/assignment`;
   const MODULE_API_URL = `${HTTP_SERVER}/lab5/module`;
-
   return (
     <div id="wd-working-with-objects">
       <h3>Working With Objects</h3>
       <h4>Retrieving Objects</h4>
-      <a 
+      <a
         id="wd-retrieve-assignments"
-        className="btn btn-primary"
-        href={`${HTTP_SERVER}/lab5/assignment`}
+        className="btn btn-primary me-2"
+        href={`${ASSIGNMENT_API_URL}`}
       >
         Get Assignment
       </a>
+      <a
+        id="wd-retrieve-module"
+        className="btn btn-secondary"
+        href={`${MODULE_API_URL}`}
+      >
+        Get Module
+      </a>
       <hr />
-
       <h4>Retrieving Properties</h4>
-      <a 
+      <a
         id="wd-retrieve-assignment-title"
-        className="btn btn-primary"
-        href={`${HTTP_SERVER}/lab5/assignment/title`}
+        className="btn btn-primary me-2"
+        href={`${ASSIGNMENT_API_URL}/title`}
       >
         Get Title
       </a>
+      <a
+        id="wd-retrieve-module-name"
+        className="btn btn-secondary"
+        href={`${MODULE_API_URL}/name`}
+      >
+        Get Module Name
+      </a>
       <hr />
-
       <h4>Modifying Properties</h4>
-      <a 
+      <a
         id="wd-update-assignment-title"
         className="btn btn-primary float-end"
         href={`${ASSIGNMENT_API_URL}/title/${assignment.title}`}
@@ -58,103 +65,84 @@ export default function WorkingWithObjects() {
       <FormControl
         className="w-75"
         id="wd-assignment-title"
-        value={assignment.title}
+        defaultValue={assignment.title}
         onChange={(e) =>
           setAssignment({ ...assignment, title: e.target.value })
         }
       />
       <br />
       <br />
-
-      <h4>Module</h4>
-      <a 
-        id="wd-retrieve-module"
-        className="btn btn-primary me-2"
-        href={`${MODULE_API_URL}`}
-      >
-        Get Module
-      </a>
-
       <a
-        id="wd-retrieve-module-name"
-        className="btn btn-primary"
-        href={`${MODULE_API_URL}/name`}
-      >
-        Get Module Name
-      </a>
-      <br />
-      <br />
-
-      <a 
         id="wd-update-assignment-score"
-        className="btn btn-primary float-end"
+        className="btn btn-outline-primary float-end"
         href={`${ASSIGNMENT_API_URL}/score/${assignment.score}`}
       >
         Update Score
       </a>
       <FormControl
-        className="w-75"
+        className="w-25"
         id="wd-assignment-score"
         type="number"
-        value={assignment.score}
+        defaultValue={assignment.score}
         onChange={(e) =>
-          setAssignment({ ...assignment, score: parseInt(e.target.value) })
+          setAssignment({ ...assignment, score: parseInt(e.target.value) || 0 })
         }
       />
       <br />
       <br />
-
-      <a 
+      <a
         id="wd-update-assignment-completed"
-        className="btn btn-primary float-end me-2"
+        className="btn btn-outline-secondary float-end"
         href={`${ASSIGNMENT_API_URL}/completed/${assignment.completed}`}
       >
         Update Completed
       </a>
-      <input
-        type="checkbox"
+      <FormCheck
         id="wd-assignment-completed"
         checked={assignment.completed}
         onChange={(e) =>
           setAssignment({ ...assignment, completed: e.target.checked })
         }
+        label="Completed"
       />
-      <label htmlFor="wd-assignment-completed"> Completed</label>
+      <br />
       <hr />
-
-      <a 
-        id="wd-update-module-name"
-        className="btn btn-primary float-end"
-        href={`${MODULE_API_URL}/name/${encodeURIComponent(module.name)}`}
-      > 
-        Update Module Name
-      </a>
-      <FormControl
-        className="w-75"
-        id="wd-module-name"
-        value={module.name}
-        onChange={(e) => setModule({ ...module, name: e.target.value })}
-      />
-      <br />
-      <br />
-
-      <a
-        id="wd-update-module-description"
-        className="btn btn-primary float-end"
-        href={`${MODULE_API_URL}/description/${encodeURIComponent(
-          module.description
-        )}`}
+      <h4>Module Edits</h4>
+      <div className="d-flex align-items-center mb-3" id="wd-module-name-row">
+        <FormControl
+          className="flex-grow-1 me-2"
+          id="wd-module-name"
+          defaultValue={moduleObj.name}
+          onChange={(e) => setModuleObj({ ...moduleObj, name: e.target.value })}
+        />
+        <a
+          id="wd-update-module-name"
+          className="btn btn-secondary"
+          href={`${MODULE_API_URL}/name/${moduleObj.name}`}
+        >
+          Update Module Name
+        </a>
+      </div>
+      <div
+        className="d-flex align-items-center mb-3"
+        id="wd-module-description-row"
       >
-        Update Module Description
-      </a>
-      <FormControl
-        className="w-75"
-        id="wd-module-description"
-        value={module.description}
-        onChange={(e) =>
-          setModule({ ...module, description: e.target.value })
-        }
-      />
+        <FormControl
+          className="flex-grow-1 me-2"
+          id="wd-module-description"
+          defaultValue={moduleObj.description}
+          onChange={(e) =>
+            setModuleObj({ ...moduleObj, description: e.target.value })
+          }
+        />
+        <a
+          id="wd-update-module-description"
+          className="btn btn-outline-secondary"
+          href={`${MODULE_API_URL}/description/${moduleObj.description}`}
+        >
+          Update Module Description
+        </a>
+      </div>
       <hr />
     </div>
   );

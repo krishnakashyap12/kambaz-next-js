@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FormControl, FormCheck } from "react-bootstrap";
 
 const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER || "";
+
 export default function WorkingWithObjects() {
   // Local UI state to build links
   const [moduleName, setModuleName] = useState("Intro to React");
