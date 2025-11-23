@@ -3,10 +3,12 @@ import { User } from "../types";
 
 interface AccountState {
   currentUser: User | null;
+  sessionChecked: boolean;
 }
 
 const initialState: AccountState = {
   currentUser: null,
+  sessionChecked: false,
 };
 
 const accountSlice = createSlice({
@@ -15,6 +17,7 @@ const accountSlice = createSlice({
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload;
+      state.sessionChecked = true;
     },
   },
 });

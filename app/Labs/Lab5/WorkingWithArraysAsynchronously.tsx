@@ -19,8 +19,19 @@ export default function WorkingWithArraysAsynchronously() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fetchTodos = async () => {
-    const data = (await client.fetchTodos()) as Todo[];
-    setTodos(data);
+    try {
+      const data = (await client.fetchTodos()) as Todo[];
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setTodos(data);
+      } else {
+        console.error("fetchTodos returned non-array:", data);
+        setTodos([]);
+      }
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+      setTodos([]);
+    }
   };
 
   useEffect(() => {
@@ -28,8 +39,20 @@ export default function WorkingWithArraysAsynchronously() {
   }, []);
 
   const removeTodo = async (todo: Todo) => {
-    const updated = (await client.removeTodo(todo)) as Todo[];
-    setTodos(updated);
+    try {
+      const updated = (await client.removeTodo(todo)) as Todo[];
+      // Ensure response is an array
+      if (Array.isArray(updated)) {
+        setTodos(updated);
+      } else {
+        // If not an array, refetch todos
+        fetchTodos();
+      }
+    } catch (error) {
+      console.error("Error removing todo:", error);
+      // Refetch todos on error
+      fetchTodos();
+    }
   };
 
   const extractMessage = (err: unknown): string => {
@@ -57,8 +80,19 @@ export default function WorkingWithArraysAsynchronously() {
   };
 
   const createNewTodo = async () => {
-    const updated = (await client.createNewTodo()) as Todo[];
-    setTodos(updated);
+    try {
+      const updated = (await client.createNewTodo()) as Todo[];
+      // Ensure response is an array
+      if (Array.isArray(updated)) {
+        setTodos(updated);
+      } else {
+        // If not an array, refetch todos
+        fetchTodos();
+      }
+    } catch (error) {
+      console.error("Error creating todo:", error);
+      fetchTodos();
+    }
   };
 
   const postNewTodo = async () => {
@@ -111,7 +145,7 @@ export default function WorkingWithArraysAsynchronously() {
         />
       </h4>
       <ListGroup>
-        {todos.map((todo) => (
+        {Array.isArray(todos) && todos.map((todo) => (
           <ListGroupItem key={todo.id}>
             <FaTrash
               onClick={() => removeTodo(todo)}

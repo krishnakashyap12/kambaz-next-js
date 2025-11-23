@@ -14,7 +14,8 @@ export default function Session({ children }: { children: React.ReactNode }) {
         const currentUser: User = await client.profile();
         dispatch(setCurrentUser(currentUser));
       } catch (err: unknown) {
-        console.error("Error fetching profile:", err);
+        // 401 means not logged in, which is fine - just set user to null
+        dispatch(setCurrentUser(null));
       }
     };
     fetchProfile();
