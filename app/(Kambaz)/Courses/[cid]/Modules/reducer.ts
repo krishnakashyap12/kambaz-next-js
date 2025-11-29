@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { modules } from "../../../Database";
 import { Module } from "../../../types";
 
 interface ModulesState {
@@ -7,7 +6,7 @@ interface ModulesState {
 }
 
 const initialState: ModulesState = {
-  modules: modules,
+  modules: [],
 };
 
 const modulesSlice = createSlice({
@@ -33,9 +32,14 @@ const modulesSlice = createSlice({
         m._id === moduleId ? { ...m, editing: true } : m
       );
     },
+    stopEditingModule: (state, { payload: moduleId }: PayloadAction<string>) => {
+      state.modules = state.modules.map((m) =>
+        m._id === moduleId ? { ...m, editing: false } : m
+      );
+    },
   },
 });
 
-export const { addModule, deleteModule, updateModule, editModule, setModules } =
+export const { addModule, deleteModule, updateModule, editModule, stopEditingModule, setModules } =
   modulesSlice.actions;
 export default modulesSlice.reducer;

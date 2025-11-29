@@ -14,6 +14,7 @@ export default function AccountNavigation() {
     Signin: "/Account/Signin",
     Signup: "/Account/Signup",
     Profile: "/Account/Profile",
+    Users: "/Account/Users",
   };
 
   const isActive = (href: string) =>
@@ -37,6 +38,17 @@ export default function AccountNavigation() {
             </Link>
           );
         })}
+        {currentUser && currentUser.role === "ADMIN" && (
+          <Link
+            href="/Account/Users"
+            id="wd-account-users-link"
+            className={`list-group-item border-0 ${
+              isActive("/Account/Users") ? "active" : "text-danger"
+            }`}
+          >
+            Users
+          </Link>
+        )}
       </ListGroup>
     </div>
   );

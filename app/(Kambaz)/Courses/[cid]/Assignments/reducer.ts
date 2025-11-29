@@ -1,11 +1,9 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from "@reduxjs/toolkit";
-import { assignments } from "../../../Database";
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  assignments: assignments,
+  assignments: [] as any[],
 };
 
 const assignmentsSlice = createSlice({
@@ -16,11 +14,8 @@ const assignmentsSlice = createSlice({
       state.assignments = assignments;
     },
     addAssignment: (state, { payload: assignment }) => {
-      const newAssignment = {
-        ...assignment,
-        _id: uuidv4(),
-      };
-      state.assignments = [...state.assignments, newAssignment] as any;
+      // The assignment already has an _id from the server, so just add it
+      state.assignments = [...state.assignments, assignment] as any;
     },
     deleteAssignment: (state, { payload: assignmentId }) => {
       state.assignments = state.assignments.filter(

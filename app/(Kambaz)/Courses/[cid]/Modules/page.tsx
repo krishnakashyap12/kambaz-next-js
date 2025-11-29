@@ -12,6 +12,7 @@ import {
   updateModule,
   deleteModule,
   setModules,
+  stopEditingModule,
 } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -69,7 +70,8 @@ export default function Modules() {
   const handleUpdateModule = async (module: Module) => {
     try {
       const updatedModule = await client.updateModule(module);
-      dispatch(updateModule(updatedModule));
+      // Ensure editing is set to false after update
+      dispatch(updateModule({ ...updatedModule, editing: false }));
     } catch (error) {
       console.error("Error updating module:", error);
       alert("Failed to update module");
@@ -106,15 +108,29 @@ export default function Modules() {
                 {isFaculty && module.editing && (
                   <FormControl
                     className="w-50 d-inline-block"
-                    onChange={(e) =>
-                      dispatch(updateModule({ ...module, name: e.target.value }))
-                    }
+                    value={module.name || ""}
+                    onChange={(e) => {
+                      const updatedModule = { ...module, name: e.target.value };
+                      dispatch(updateModule(updatedModule));
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        handleUpdateModule({ ...module, editing: false });
+                        e.preventDefault();
+                        const inputValue = (e.target as HTMLInputElement).value.trim();
+                        if (inputValue) {
+                          // Immediately stop editing to hide the text box
+                          dispatch(stopEditingModule(module._id));
+                          // Update the name in Redux immediately for better UX
+                          dispatch(updateModule({ ...module, name: inputValue, editing: false }));
+                          // Then save to server (this will update with server response)
+                          const moduleToUpdate = { ...module, name: inputValue };
+                          handleUpdateModule(moduleToUpdate).catch(() => {
+                            // If update fails, restore editing mode
+                            dispatch(editModule(module._id));
+                          });
+                        }
                       }
                     }}
-                    defaultValue={module.name}
                   />
                 )}
 

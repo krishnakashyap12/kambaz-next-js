@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { RootState } from "../../../store";
@@ -22,6 +22,7 @@ import { FaSearch } from "react-icons/fa";
 export default function Assignments() {
   const { cid } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch();
 
   const { assignments } = useSelector(
@@ -31,7 +32,25 @@ export default function Assignments() {
     (state: RootState) => state.accountReducer
   );
 
-  // Fetch assignments from backend on mount
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      const month = date.toLocaleString("en-US", { month: "short" });
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? "pm" : "am";
+      const displayHours = hours % 12 || 12;
+      const displayMinutes = minutes.toString().padStart(2, "0");
+      return `${month} ${day} • ${displayHours}:${displayMinutes}${ampm}`;
+    } catch (error) {
+      return dateString;
+    }
+  };
+
+  // Fetch assignments from backend on mount and when pathname changes (user navigates back)
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
@@ -42,7 +61,7 @@ export default function Assignments() {
       }
     };
     fetchAssignments();
-  }, [cid, dispatch]);
+  }, [cid, dispatch, pathname]);
 
   const filteredAssignments = assignments.filter(
     (assignment) => assignment.course === cid
@@ -145,11 +164,21 @@ export default function Assignments() {
                 </Link>
                 <div className="small mt-1 text-muted">
                   <span className="text-success me-3">Multiple Modules</span>
-                  <span>Not available until May 6 • 12:00am</span>
-                  <span className="mx-2">|</span>
-                  <span>Due May 13 • 11:59pm</span>
-                  <span className="mx-2">|</span>
-                  <span>100 pts</span>
+                  {assignment.availableFrom && (
+                    <>
+                      <span>
+                        Not available until {formatDate(assignment.availableFrom)}
+                      </span>
+                      <span className="mx-2">|</span>
+                    </>
+                  )}
+                  {assignment.dueDate && (
+                    <>
+                      <span>Due {formatDate(assignment.dueDate)}</span>
+                      <span className="mx-2">|</span>
+                    </>
+                  )}
+                  {assignment.points && <span>{assignment.points} pts</span>}
                 </div>
               </div>
               <GreenCheckmark />

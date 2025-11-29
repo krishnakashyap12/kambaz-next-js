@@ -39,12 +39,6 @@ export const findCoursesForUser = async (userId: string) => {
   return response.data;
 };
 
-// Add this function - it calls /current/courses endpoint
-export const findMyCourses = async () => {
-  const { data } = await axiosWithCredentials.get(`${USERS_API}/current/courses`);
-  return data;
-};
-
 export const enrollIntoCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}`); 
   return response.data;
@@ -52,5 +46,30 @@ export const enrollIntoCourse = async (userId: string, courseId: string) => {
 
 export const unenrollFromCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}`);  
+  return response.data;
+};
+
+export const findAllUsers = async () => {
+  const response = await axiosWithCredentials.get(USERS_API);
+  return response.data;
+};
+
+export const findUsersByRole = async (role: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+  return response.data;
+};
+
+export const findUsersByPartialName = async (name: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+  return response.data;
+};
+
+export const findUserById = async (id: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${id}`);
+  return response.data;
+};
+
+export const deleteUser = async (userId: string) => {
+  const response = await axiosWithCredentials.delete(`${USERS_API}/${userId}`);
   return response.data;
 };

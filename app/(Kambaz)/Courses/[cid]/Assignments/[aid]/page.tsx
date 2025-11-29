@@ -103,12 +103,19 @@ export default function AssignmentEditor() {
         const newAssignment = await client.createAssignmentForCourse(cid, formData);
         dispatch(addAssignment(newAssignment));
       } else {
-        const updatedAssignment = await client.updateAssignment({ 
+        const assignmentToUpdate = { 
           ...formData, 
           _id: aid, 
           course: cid 
-        });
+        };
+        console.log("Updating assignment with data:", assignmentToUpdate);
+        const updatedAssignment = await client.updateAssignment(assignmentToUpdate);
+        console.log("Received updated assignment:", updatedAssignment);
+        // Update the assignment in the store
         dispatch(updateAssignment(updatedAssignment));
+        // Also refetch all assignments to ensure we have the latest data
+        const allAssignments = await client.findAssignmentsForCourse(cid);
+        dispatch(setAssignments(allAssignments));
       }
       router.push(`/Courses/${cid}/Assignments`);
     } catch (error) {
