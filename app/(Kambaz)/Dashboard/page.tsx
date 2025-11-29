@@ -88,7 +88,12 @@ export default function Dashboard() {
 
   const handleAddNewCourse = async () => {
     try {
-      const newCourse = await coursesClient.createCourse(course);
+      // Ensure default image is set if not provided
+      const courseToCreate = {
+        ...course,
+        image: course.image || "/images/reactjs.jpg",
+      };
+      const newCourse = await coursesClient.createCourse(courseToCreate);
 
       // Refetch courses from backend
       if (enrolling) {

@@ -35,12 +35,24 @@ export default function PeopleDetails() {
 
   const saveUser = async () => {
     if (!user) return;
-    const [firstName, lastName] = name.split(" ");
+    // Handle name splitting more robustly
+    const nameParts = name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
     const updatedUser = { ...user, firstName, lastName };
-    await client.updateUser(updatedUser);
-    setUser(updatedUser);
-    setEditing(false);
-    router.push("/Account/Users");
+    try {
+      const savedUser = await client.updateUser(updatedUser);
+      // Update local state with the response from server
+      setUser(savedUser);
+      setEditing(false);
+      // Refresh the user list by navigating
+      router.push("/Account/Users");
+      // Force a refresh of the page to show updated data
+      router.refresh();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Failed to update user");
+    }
   };
 
   return (
