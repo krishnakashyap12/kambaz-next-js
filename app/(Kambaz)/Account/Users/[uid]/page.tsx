@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { FaUserCircle, FaPencil, FaCheck } from "react-icons/fa";
+import { FaUserCircle, FaPencilAlt, FaCheck } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { useParams, useRouter } from "next/navigation";
 import { FormControl } from "react-bootstrap";
@@ -57,7 +57,7 @@ export default function PeopleDetails() {
       <hr />
       <div className="text-danger fs-4">
         {!editing && (
-          <FaPencil
+          <FaPencilAlt
             onClick={() => setEditing(true)}
             className="float-end fs-5 mt-2 wd-edit"
           />
