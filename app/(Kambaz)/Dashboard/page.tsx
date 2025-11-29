@@ -33,7 +33,7 @@ export default function Dashboard() {
       if (!currentUser) return;
       const userCourses = await userClient.findCoursesForUser(currentUser._id);
       // Filter out any null or undefined courses
-      const validCourses = userCourses.filter((c): c is Course => c != null && c._id != null);
+      const validCourses = userCourses.filter((c: Course | null | undefined): c is Course => c != null && c._id != null);
       dispatch(setCourses(validCourses));
     } catch (error) {
       console.error("Error fetching user courses:", error);
@@ -47,7 +47,7 @@ export default function Dashboard() {
       const enrolledCourses = await userClient.findCoursesForUser(currentUser._id);
       // Filter out null courses and add enrollment status
       const coursesWithEnrollment = allCourses
-        .filter((c): c is Course => c != null && c._id != null)
+        .filter((c: Course | null | undefined): c is Course => c != null && c._id != null)
         .map((c: Course) => {
           if (enrolledCourses.find((ec: Course) => ec && ec._id && ec._id === c._id)) {
             return { ...c, enrolled: true };
@@ -79,7 +79,7 @@ export default function Dashboard() {
         await userClient.unenrollFromCourse(currentUser._id, courseId);
       }
       const updatedCourses = courses
-        .filter((c): c is Course & { enrolled?: boolean } => c != null && c._id != null)
+        .filter((c: (Course & { enrolled?: boolean }) | null | undefined): c is Course & { enrolled?: boolean } => c != null && c._id != null)
         .map((c) => {
           if (c._id === courseId) {
             return { ...c, enrolled: enrolled };
@@ -216,7 +216,7 @@ export default function Dashboard() {
 
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.filter((c): c is Course & { enrolled?: boolean } => c != null && c._id != null).map((c: Course & { enrolled?: boolean }) => (
+          {courses.filter((c: (Course & { enrolled?: boolean }) | null | undefined): c is Course & { enrolled?: boolean } => c != null && c._id != null).map((c: Course & { enrolled?: boolean }) => (
             <Col key={c._id} style={{ width: "300px" }}>
               <Card>
                 <Link
