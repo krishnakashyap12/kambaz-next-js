@@ -279,7 +279,10 @@ export default function Users() {
                 <FormControl
                   as="select"
                   value={newUserForm.role || "STUDENT"}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any })}
+                  onChange={(e) => {
+                    const roleValue = e.target.value as "STUDENT" | "FACULTY" | "ADMIN" | "TA";
+                    setNewUserForm({ ...newUserForm, role: roleValue });
+                  }}
                   className="wd-edit-role"
                 >
                   <option value="STUDENT">Student</option>
