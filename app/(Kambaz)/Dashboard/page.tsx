@@ -32,7 +32,9 @@ export default function Dashboard() {
     try {
       if (!currentUser) return;
       const userCourses = await userClient.findCoursesForUser(currentUser._id);
-      dispatch(setCourses(userCourses));
+      // Filter out any null or undefined courses
+      const validCourses = userCourses.filter((c): c is Course => c != null && c._id != null);
+      dispatch(setCourses(validCourses));
     } catch (error) {
       console.error("Error fetching user courses:", error);
     }
@@ -43,13 +45,16 @@ export default function Dashboard() {
       if (!currentUser) return;
       const allCourses = await coursesClient.fetchAllCourses();
       const enrolledCourses = await userClient.findCoursesForUser(currentUser._id);
-      const coursesWithEnrollment = allCourses.map((c: Course) => {
-        if (enrolledCourses.find((ec: Course) => ec._id === c._id)) {
-          return { ...c, enrolled: true };
-        } else {
-          return c;
-        }
-      });
+      // Filter out null courses and add enrollment status
+      const coursesWithEnrollment = allCourses
+        .filter((c): c is Course => c != null && c._id != null)
+        .map((c: Course) => {
+          if (enrolledCourses.find((ec: Course) => ec && ec._id && ec._id === c._id)) {
+            return { ...c, enrolled: true };
+          } else {
+            return c;
+          }
+        });
       dispatch(setCourses(coursesWithEnrollment));
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -73,13 +78,15 @@ export default function Dashboard() {
       } else {
         await userClient.unenrollFromCourse(currentUser._id, courseId);
       }
-      const updatedCourses = courses.map((c) => {
-        if (c._id === courseId) {
-          return { ...c, enrolled: enrolled };
-        } else {
-          return c;
-        }
-      });
+      const updatedCourses = courses
+        .filter((c): c is Course & { enrolled?: boolean } => c != null && c._id != null)
+        .map((c) => {
+          if (c._id === courseId) {
+            return { ...c, enrolled: enrolled };
+          } else {
+            return c;
+          }
+        });
       dispatch(setCourses(updatedCourses));
     } catch (error) {
       console.error("Error updating enrollment:", error);
@@ -121,9 +128,12 @@ export default function Dashboard() {
     try {
       await coursesClient.updateCourse(course);
       
-      // Refetch all courses from backend
-      const fetchedCourses = await coursesClient.fetchAllCourses();
-      dispatch(setCourses(fetchedCourses));
+      // Refetch courses based on current view mode
+      if (enrolling) {
+        await fetchCourses();
+      } else {
+        await findCoursesForUser();
+      }
     } catch (error) {
       console.error("Error updating course:", error);
       alert("Failed to update course");
@@ -136,9 +146,12 @@ export default function Dashboard() {
     try {
       await coursesClient.deleteCourse(courseId);
       
-      // Refetch all courses from backend
-      const fetchedCourses = await coursesClient.fetchAllCourses();
-      dispatch(setCourses(fetchedCourses));
+      // Refetch courses based on current view mode
+      if (enrolling) {
+        await fetchCourses();
+      } else {
+        await findCoursesForUser();
+      }
     } catch (error) {
       console.error("Error deleting course:", error);
       alert("Failed to delete course");
@@ -203,7 +216,7 @@ export default function Dashboard() {
 
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.map((c: Course & { enrolled?: boolean }) => (
+          {courses.filter((c): c is Course & { enrolled?: boolean } => c != null && c._id != null).map((c: Course & { enrolled?: boolean }) => (
             <Col key={c._id} style={{ width: "300px" }}>
               <Card>
                 <Link

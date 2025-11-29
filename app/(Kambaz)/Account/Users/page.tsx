@@ -28,14 +28,16 @@ export default function Users() {
 
   const fetchUsers = async () => {
     const users = await client.findAllUsers();
-    setUsers(users);
+    // Filter out any null or undefined values
+    setUsers(users.filter((user): user is User => user != null && user._id != null));
   };
 
   const filterUsersByRole = async (role: string) => {
     setRole(role);
     if (role) {
       const users = await client.findUsersByRole(role);
-      setUsers(users);
+      // Filter out any null or undefined values
+      setUsers(users.filter((user): user is User => user != null && user._id != null));
     } else {
       fetchUsers();
     }
@@ -45,7 +47,8 @@ export default function Users() {
     setName(name);
     if (name) {
       const users = await client.findUsersByPartialName(name);
-      setUsers(users);
+      // Filter out any null or undefined values
+      setUsers(users.filter((user): user is User => user != null && user._id != null));
     } else {
       fetchUsers();
     }
@@ -53,9 +56,11 @@ export default function Users() {
 
   const handleUserClick = async (userId: string) => {
     const user = await client.findUserById(userId);
-    setSelectedUser(user);
-    setEditingName(`${user.firstName} ${user.lastName}`);
-    setEditing(false);
+    if (user && user._id) {
+      setSelectedUser(user);
+      setEditingName(`${user.firstName} ${user.lastName}`);
+      setEditing(false);
+    }
   };
 
   const closeSidebar = () => {
@@ -113,7 +118,7 @@ export default function Users() {
       try {
         const savedUser = await client.updateUser(updatedUser);
         setSelectedUser(savedUser);
-        setUsers(users.map(u => u._id === savedUser._id ? savedUser : u));
+        setUsers(users.filter(u => u != null).map(u => u._id === savedUser._id ? savedUser : u));
         setEditing(false);
         await fetchUsers();
       } catch (error) {
@@ -185,7 +190,7 @@ export default function Users() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users.filter(user => user != null && user._id != null).map((user) => (
                 <tr key={user._id}>
                   <td className="wd-full-name text-nowrap">
                     <button
