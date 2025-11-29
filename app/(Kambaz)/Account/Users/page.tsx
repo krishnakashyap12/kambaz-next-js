@@ -29,7 +29,7 @@ export default function Users() {
   const fetchUsers = async () => {
     const users = await client.findAllUsers();
     // Filter out any null or undefined values
-    setUsers(users.filter((user): user is User => user != null && user._id != null));
+    setUsers(users.filter((user: User | null | undefined): user is User => user != null && user._id != null));
   };
 
   const filterUsersByRole = async (role: string) => {
@@ -37,7 +37,7 @@ export default function Users() {
     if (role) {
       const users = await client.findUsersByRole(role);
       // Filter out any null or undefined values
-      setUsers(users.filter((user): user is User => user != null && user._id != null));
+      setUsers(users.filter((user: User | null | undefined): user is User => user != null && user._id != null));
     } else {
       fetchUsers();
     }
@@ -48,7 +48,7 @@ export default function Users() {
     if (name) {
       const users = await client.findUsersByPartialName(name);
       // Filter out any null or undefined values
-      setUsers(users.filter((user): user is User => user != null && user._id != null));
+      setUsers(users.filter((user: User | null | undefined): user is User => user != null && user._id != null));
     } else {
       fetchUsers();
     }
