@@ -62,6 +62,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    if (!currentUser) {
+      // clear courses when no user is signed in
+      dispatch(setCourses([]));
+      return;
+    }
+
     if (enrolling) {
       fetchCourses();
     } else {
@@ -214,7 +220,10 @@ export default function Dashboard() {
       </h2>
       <hr />
 
-      <div id="wd-dashboard-courses">
+      {!currentUser ? (
+        <div className="alert alert-info">Please sign in to view courses.</div>
+      ) : (
+        <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {courses.filter((c: (Course & { enrolled?: boolean }) | null | undefined): c is Course & { enrolled?: boolean } => c != null && c._id != null).map((c: Course & { enrolled?: boolean }) => (
             <Col key={c._id} style={{ width: "300px" }}>
@@ -281,7 +290,8 @@ export default function Dashboard() {
             </Col>
           ))}
         </Row>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

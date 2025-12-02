@@ -9,6 +9,13 @@ export default function Labs() {
         <strong>Section:</strong> 04
       </p>
 
+      <p>
+        <strong>Backend (Render):</strong>{" "}
+        <a href="https://kambaz-node-server-app-ellm.onrender.com" target="_blank" rel="noopener noreferrer">
+          https://kambaz-node-server-app-ellm.onrender.com
+        </a>
+      </p>
+
       <h1>Labs</h1>
       <ul>
         <li>
